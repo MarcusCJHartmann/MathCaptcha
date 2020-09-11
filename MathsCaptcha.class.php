@@ -66,6 +66,48 @@ class MathsCaptcha{
     function getMaths(){
         return $this->firstPosition." ".$this->operation." ".$this->secondPosition." = ";
     }
+	
+	function getSVGMaths(){
+		$first=$this->getNumberAsSVG($this->firstPosition);
+		$operation=$this->getOperationAsSVG($this->operation);
+		$second=$this->getNumberAsSVG($this->secondPosition);
+		$equ=$this->getOperationAsSVG("=");
+		return $first." ".$operation." ".$second." ".$equ." ";
+	}
+	
+	private function getOperationAsSVG($op){
+		switch($op){
+			case "+":
+			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/plus.svg")))."</span>";
+			break;
+			case "-":
+			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/minus.svg")))."</span>";
+			break;
+			case "x":
+			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/by.svg")))."</span>";
+			break;
+			case ":":
+			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/div.svg")))."</span>";
+			break;
+			case "=":
+			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/eq.svg")))."</span>";
+			break;
+		}
+	}
+	private function getNumberAsSVG($number){
+	
+		$str="$number";
+		$strArgs=str_split($str);
+
+		$svgArgs=array();
+		foreach($strArgs as $key=> $number){
+			$svgArgs[]="<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/".$number.".svg")))."</span>";
+		}
+
+		
+		$svgString=implode(PHP_EOL,$svgArgs);
+		return $svgString;
+	}
     
     private function createAddition(){
         $this->firstPosition=random_int(1,10);
