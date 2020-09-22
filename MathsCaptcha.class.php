@@ -103,7 +103,6 @@ class MathsCaptcha{
 		foreach($strArgs as $key=> $number){
 			$svgArgs[]="<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/".$number.".svg")))."</span>";
 		}
-
 		
 		$svgString=implode(PHP_EOL,$svgArgs);
 		return $svgString;
