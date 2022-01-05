@@ -9,11 +9,9 @@ class MathsCaptcha{
     private $resulthash;
     
     function __construct($wishedOperation=null){
-        if($wishedOperation==null){
-            $operationIndex=random_int(0,count($this->operations)-1);
-            
-            $this->operation=$this->operations[$operationIndex];
-        }else{
+        $operationIndex=random_int(0,count($this->operations)-1);
+        $this->operation=$this->operations[$operationIndex];
+        if($wishedOperation!=null&&in_array($wishedOperation,$this->operations)){
             $this->operation=$wishedOperation;
         }
         
@@ -34,18 +32,20 @@ class MathsCaptcha{
     }
 
     function getCaptcha(){
-
         ob_start();
-        ?>
-        <div style="display:inline-block;">
-        <?php
         echo $this->getSVGMaths();
         ?>
         <input type="text" name="_captcha_solution" value="-" style="width:40px;font-size:1em;border:0px;background:#ccc;text-align:center;" onclick="if(this.value=='-'){select()}" required>
-        </div>
         <input type="hidden" name="_captcha_hash" value="<?php echo $this->resulthash ?>">
         <?php
         echo ob_get_clean();
+    }
+
+    function getCaptchaJson(){
+        $args=array();
+        $args["_captcha_svg"]=$this->getSVGMaths();
+        $args["_captcha_hash"]=$this->resulthash;
+        return json_encode($args);
     }
     
     static function verify($forminput,$existingHash){
@@ -75,7 +75,7 @@ class MathsCaptcha{
 		$operation=$this->getOperationAsSVG($this->operation);
 		$second=$this->getNumberAsSVG($this->secondPosition);
 		$equ=$this->getOperationAsSVG("=");
-		return "<div style='display:inline-block;'>".$first."".$operation."".$second."".$equ." </div>";
+		return "<div class='_captcha_svg' style='display:inline-block;'>".$first.$operation.$second.$equ." </div>";
     }
     
 	private function getOperationAsSVG($op){
@@ -99,7 +99,6 @@ class MathsCaptcha{
     }
     
 	private function getNumberAsSVG($number){
-	
 		$str="$number";
 		$strArgs=str_split($str);
 
@@ -113,14 +112,14 @@ class MathsCaptcha{
 	}
     
     private function createAddition(){
-        $this->firstPosition=random_int(1,10);
+        $this->firstPosition=random_int(1,30);
         $this->secondPosition=random_int(1,10);
         $this->result=$this->firstPosition+$this->secondPosition;
         $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
 
     private function createSubtraction(){
-        $one=random_int(1,10);
+        $one=random_int(1,30);
         $two=random_int(1,10);
         if($one>$two){
             $this->firstPosition=$one;
@@ -129,7 +128,6 @@ class MathsCaptcha{
             $this->firstPosition=$two;
             $this->secondPosition=$one;
         }
-        
         $this->result=$this->firstPosition-$this->secondPosition;
         $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
