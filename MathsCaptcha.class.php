@@ -8,15 +8,7 @@ class MathsCaptcha{
     private $result;
     private $resulthash;
     
-    
-    
-    function __construct($input=null){
-        if($input!=null){
-            $this->init($input);   
-        }
-    }
-    
-    function init($wishedOperation=null){
+    function __construct($wishedOperation=null){
         if($wishedOperation==null){
             $operationIndex=random_int(0,count($this->operations)-1);
             
@@ -37,25 +29,36 @@ class MathsCaptcha{
                 break;
             case ":":
                 $this->createDivision();
-                break;
-                
+                break; 
         }
     }
-    
-    function evaluate($forminput,$existingHash){
-        if(md5($forminput)==$existingHash){
-            return true;
-        }
-        return false;
+
+    function getCaptcha(){
+
+        ob_start();
+        ?>
+        <div style="display:inline-block;">
+        <?php
+        echo $this->getSVGMaths();
+        ?>
+        <input type="text" name="_captcha_solution" value="-" style="width:40px;font-size:1em;border:0px;background:#ccc;text-align:center;" onclick="if(this.value=='-'){select()}" required>
+        </div>
+        <input type="hidden" name="_captcha_hash" value="<?php echo $this->resulthash ?>">
+        <?php
+        echo ob_get_clean();
     }
     
-    function getFirstPosition(){
+    static function verify($forminput,$existingHash){
+        return password_verify($forminput,$existingHash);
+    }
+    
+    private function getFirstPosition(){
         return $this->firstPosition;
     }
-    function getSecondPosition(){
+    private function getSecondPosition(){
         return $this->secondPosition;
     }
-    function getResult(){
+    private function getResult(){
         return $this->result;
     }
     
@@ -63,18 +66,18 @@ class MathsCaptcha{
         return $this->resulthash;
     }
     
-    function getMaths(){
+    private function getMaths(){
         return $this->firstPosition." ".$this->operation." ".$this->secondPosition." = ";
     }
 	
-	function getSVGMaths(){
+	private function getSVGMaths(){
 		$first=$this->getNumberAsSVG($this->firstPosition);
 		$operation=$this->getOperationAsSVG($this->operation);
 		$second=$this->getNumberAsSVG($this->secondPosition);
 		$equ=$this->getOperationAsSVG("=");
-		return $first." ".$operation." ".$second." ".$equ." ";
-	}
-	
+		return "<div style='display:inline-block;'>".$first."".$operation."".$second."".$equ." </div>";
+    }
+    
 	private function getOperationAsSVG($op){
 		switch($op){
 			case "+":
@@ -93,7 +96,8 @@ class MathsCaptcha{
 			return "<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/eq.svg")))."</span>";
 			break;
 		}
-	}
+    }
+    
 	private function getNumberAsSVG($number){
 	
 		$str="$number";
@@ -104,7 +108,7 @@ class MathsCaptcha{
 			$svgArgs[]="<span>".str_replace(PHP_EOL,"",trim(file_get_contents(__DIR__."/svg/".$number.".svg")))."</span>";
 		}
 		
-		$svgString=implode(PHP_EOL,$svgArgs);
+		$svgString=implode("",$svgArgs);
 		return $svgString;
 	}
     
@@ -112,8 +116,9 @@ class MathsCaptcha{
         $this->firstPosition=random_int(1,10);
         $this->secondPosition=random_int(1,10);
         $this->result=$this->firstPosition+$this->secondPosition;
-        $this->resulthash=md5($this->result);
+        $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
+
     private function createSubtraction(){
         $one=random_int(1,10);
         $two=random_int(1,10);
@@ -126,14 +131,14 @@ class MathsCaptcha{
         }
         
         $this->result=$this->firstPosition-$this->secondPosition;
-        $this->resulthash=md5($this->result);
+        $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
     
     private function createMultiplication(){
-        $this->firstPosition=random_int(2,10);
-        $this->secondPosition=random_int(2,10);
+        $this->firstPosition=random_int(2,5);
+        $this->secondPosition=random_int(2,5);
         $this->result=$this->firstPosition*$this->secondPosition;
-        $this->resulthash=md5($this->result);
+        $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
     
     private function createDivision(){
@@ -141,7 +146,6 @@ class MathsCaptcha{
         $this->firstPosition=$captcha->getResult();
         $this->secondPosition=$captcha->getFirstPosition();
         $this->result=$captcha->getSecondPosition();
-        $this->resulthash=md5($this->result);
+        $this->resulthash=password_hash($this->result, PASSWORD_DEFAULT );
     }
-    
 }
