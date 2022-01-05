@@ -1,11 +1,11 @@
-#MathsCaptcha
+# MathsCaptcha
 MathsCaptcha is a simple PHP Class for using captchas in php forms. It works by creating a simple maths task displayed as SVG. The correct answer is served as hashed value with the SVG and can be compared after form submition with user input by classown method.
 
-##The class
+## The class
 $captcha=new MathsCaptcha("+|-|x|:")
 The class-Constructor expects an optional maths operator for the Captcha.
 
-##Methods
+## Methods
 *MathsCaptcha::verify(input,hash)*
 Calculates the hashvalue from captcha input and compares it with given hash.
 
@@ -24,7 +24,7 @@ Returns the captcha task as plain letters.
 *$captcha->getSVGMaths*
 Returns the captcha task as SVG
 
-##Simple Code example
+## Simple Code example
 In your form:
 
     $captcha=new MathsCaptcha(); 
