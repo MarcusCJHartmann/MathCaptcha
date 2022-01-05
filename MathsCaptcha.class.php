@@ -31,7 +31,7 @@ class MathsCaptcha{
         }
     }
 
-    function getCaptcha(){
+    public function getCaptcha(){
         ob_start();
         echo $this->getSVGMaths();?>
         <input type="text" name="_captcha_solution" value="-" style="width:40px;font-size:1em;border:0px;background:#ccc;text-align:center;" onclick="if(this.value=='-'){select()}" required>
@@ -40,11 +40,27 @@ class MathsCaptcha{
         echo ob_get_clean();
     }
 
-    function getCaptchaJson(){
+    public function getCaptchaJson(){
         $args=array();
         $args["_captcha_svg"]=$this->getSVGMaths();
         $args["_captcha_hash"]=$this->resulthash;
         return json_encode($args);
+    }
+
+    public function getResultHash(){
+        return $this->resulthash;
+    }
+    
+    public function getMaths(){
+        return $this->firstPosition." ".$this->operation." ".$this->secondPosition." = ";
+    }
+	
+	public function getSVGMaths(){
+		$first=$this->getNumberAsSVG($this->firstPosition);
+		$operation=$this->getOperationAsSVG($this->operation);
+		$second=$this->getNumberAsSVG($this->secondPosition);
+		$equ=$this->getOperationAsSVG("=");
+		return "<div class='_captcha_svg' style='display:inline-block;'>".$first.$operation.$second.$equ." </div>";
     }
     
     static function verify($forminput,$existingHash){
@@ -61,21 +77,7 @@ class MathsCaptcha{
         return $this->result;
     }
     
-    public function getResultHash(){
-        return $this->resulthash;
-    }
-    
-    public function getMaths(){
-        return $this->firstPosition." ".$this->operation." ".$this->secondPosition." = ";
-    }
-	
-	public function getSVGMaths(){
-		$first=$this->getNumberAsSVG($this->firstPosition);
-		$operation=$this->getOperationAsSVG($this->operation);
-		$second=$this->getNumberAsSVG($this->secondPosition);
-		$equ=$this->getOperationAsSVG("=");
-		return "<div class='_captcha_svg' style='display:inline-block;'>".$first.$operation.$second.$equ." </div>";
-    }
+   
     
 	private function getOperationAsSVG($op){
 		switch($op){
