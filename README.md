@@ -1,4 +1,4 @@
-**MathsCaptcha**
+***MathsCaptcha***
 MathsCaptcha is a simple PHP Class for using captchas in php forms. It works by creating a simple maths task displayed as SVG. The correct answer is served as hashed value with the SVG and can be compared after form submition with user input by classown method.
 
 **The class**
