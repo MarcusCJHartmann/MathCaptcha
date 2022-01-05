@@ -33,8 +33,7 @@ class MathsCaptcha{
 
     function getCaptcha(){
         ob_start();
-        echo $this->getSVGMaths();
-        ?>
+        echo $this->getSVGMaths();?>
         <input type="text" name="_captcha_solution" value="-" style="width:40px;font-size:1em;border:0px;background:#ccc;text-align:center;" onclick="if(this.value=='-'){select()}" required>
         <input type="hidden" name="_captcha_hash" value="<?php echo $this->resulthash ?>">
         <?php
@@ -62,15 +61,15 @@ class MathsCaptcha{
         return $this->result;
     }
     
-    function getResultHash(){
+    public function getResultHash(){
         return $this->resulthash;
     }
     
-    private function getMaths(){
+    public function getMaths(){
         return $this->firstPosition." ".$this->operation." ".$this->secondPosition." = ";
     }
 	
-	private function getSVGMaths(){
+	public function getSVGMaths(){
 		$first=$this->getNumberAsSVG($this->firstPosition);
 		$operation=$this->getOperationAsSVG($this->operation);
 		$second=$this->getNumberAsSVG($this->secondPosition);
